@@ -4,6 +4,7 @@ import torch
 from .AC_FUN import AC_FUN
 from .AC_Factory import *
 import random
+import colorsys
 # ==============================================
 # TODO:
 class AC_FUN_ImagePath_Dont_use(AC_FUN):
@@ -420,3 +421,31 @@ class IsMaskEmptyNode(AC_FUN):
 
     def main(self, mask):
         return (torch.all(mask == 0).int().item(), )
+
+class ColorStep(AC_FUN):
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "color": ("STRING",{"multiline": False,"default":"#000000"}),
+            }
+        }
+    FUNCTION = "colorTransfer"
+    RETURN_TYPES = ("STRING",)
+
+    def colorTransfer(self, color):
+        step_ratio=0.12
+        color = color.lstrip('#')
+        r = int(color[0:2],16)/255
+        g = int(color[2:4],16)/255
+        b = int(color[4:6],16)/255
+        h, s, l = colorsys.rgb_to_hls(r,g,b)
+        res = []
+        for i in range(4):
+            new_l = min(1.0, l + i * step_ratio)
+            nr, ng, nb = colorsys.hls_to_rgb(h, new_l, s)
+            hr = f"{int(nr*255):02x}"
+            hg = f"{int(ng*255):02x}"
+            hb = f"{int(nb*255):02x}"
+            res.append(f"#{hr}{hg}{hb}")
+        return (res,)

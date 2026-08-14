@@ -1,5 +1,5 @@
 from .AC_FUNV4 import PictureChannels,PictureMix,Image_channel,AC_Image_Remove_Color,AC_Image_Batch
-from .AC_FUNV4 import AC_ImageContrast,AC_ImageBrightness,AC_Image_invert,AC_ImageCrop,AC_ImageDrow,AC_ImageBalance,AC_ImageCopy
+from .AC_FUNV4 import AC_ImageContrast,AC_ImageBrightness,AC_Image_invert,AC_ImageCrop,AC_ImageDrow,AC_ImageBalance,AC_ImageCopy, ColorStep
 from .AC_FUNV4 import InvertMask, IsMaskEmptyNode
 from .AC_FUN_PATH import *
 from .extend_nodes import *
@@ -33,4 +33,5 @@ NODE_CLASS_MAPPINGS = {
     "Image_遮罩反转":InvertMask,
     "Image_空遮罩判断":IsMaskEmptyNode,
     "Image_二进制数据":GetImageBinary,
+    "Image_梯度颜色":ColorStep,
 }
