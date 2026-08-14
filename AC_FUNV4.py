@@ -434,12 +434,12 @@ class ColorStep(AC_FUN):
     RETURN_TYPES = ("STRING",)
 
     def colorTransfer(self, color):
-        step_ratio=0.12
+        step_ratio = 0.12
         color = color.lstrip('#')
         r = int(color[0:2],16)/255
         g = int(color[2:4],16)/255
         b = int(color[4:6],16)/255
-        h, s, l = colorsys.rgb_to_hls(r,g,b)
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
         res = []
         for i in range(4):
             new_l = min(1.0, l + i * step_ratio)
