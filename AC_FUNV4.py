@@ -440,12 +440,14 @@ class ColorStep(AC_FUN):
         g = int(color[2:4],16)/255
         b = int(color[4:6],16)/255
         h, l, s = colorsys.rgb_to_hls(r, g, b)
-        res = []
+        res = ""
         for i in range(4):
             new_l = min(1.0, l + i * step_ratio)
             nr, ng, nb = colorsys.hls_to_rgb(h, new_l, s)
             hr = f"{int(nr*255):02x}"
             hg = f"{int(ng*255):02x}"
             hb = f"{int(nb*255):02x}"
-            res.append(f"#{hr}{hg}{hb}")
+            if i == 0: res += f"#{hr}{hg}{hb} "
+            else : res += "," + f"#{hr}{hg}{hb} "
+            
         return (res,)
