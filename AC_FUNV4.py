@@ -462,15 +462,15 @@ class IsImageExample(AC_FUN):
         return {"required":
                     {"image": (sorted(files), {"image_upload": True})},
                 }
-    RETURN_TYPES = ("BOOLEAN",)
-    RETURN_NAMES = ["true?false"]
+    RETURN_TYPES = ("BOOLEAN","IMAGE")
+    RETURN_NAMES = ["true?false", "image"]
 
     FUNCTION = "main"
 
     def main(self, image):
         image_path = folder_paths.get_annotated_filepath(image)
-        if image_path:
-            filename = os.path.basename(image_path)
-            if "example" in filename.lower():
-                return (True,)
-        return (False,)
+        pil_img = Image.open(image_path)
+        pil_img = ImageOps.exif_transpose(pil_img).convert("RGB")
+        image_tensor = pil2tensor(pil_img)
+        is_example = "example" in os.path.basename(image_path).lower()
+        return (is_example, image_tensor)
