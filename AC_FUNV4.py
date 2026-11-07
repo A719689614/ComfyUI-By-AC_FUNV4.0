@@ -5,6 +5,7 @@ import os
 from .AC_FUN import AC_FUN
 from .AC_Factory import *
 import colorsys
+import folder_paths
 # ==============================================
 # TODO:
 class AC_FUN_ImagePath_Dont_use(AC_FUN):
@@ -454,35 +455,22 @@ class ColorStep(AC_FUN):
 
 class IsImageExample(AC_FUN):
     @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "image": ("IMAGE",),
-            },
-            "optional": {
-                "image_path": ("STRING", {"default": ""}),
-            },
-        }
+    def INPUT_TYPES(s):
+        input_dir = folder_paths.get_input_directory()
+        files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+        files = folder_paths.filter_files_content_types(files, ["image"])
+        return {"required":
+                    {"image": (sorted(files), {"image_upload": True})},
+                }
     RETURN_TYPES = ("BOOLEAN",)
-    RETURN_NAMES = ["is_example"]
+    RETURN_NAMES = ["true?false"]
 
     FUNCTION = "main"
 
-    def main(self, image, image_path=""):
+    def main(self, image):
+        image_path = folder_paths.get_annotated_filepath(image)
         if image_path:
             filename = os.path.basename(image_path)
             if "example" in filename.lower():
                 return (True,)
-
-        if image is None:
-            return (True,)
-        if not isinstance(image, torch.Tensor):
-            return (True,)
-        if image.numel() == 0:
-            return (True,)
-        if torch.allclose(image, torch.zeros_like(image)):
-            return (True,)
-        if torch.allclose(image, torch.ones_like(image)):
-            return (True,)
-
         return (False,)
