@@ -1,9 +1,9 @@
 from PIL import Image,ImageEnhance,ImageOps,ImageChops
 import tensorflow as tf
 import torch
+import os
 from .AC_FUN import AC_FUN
 from .AC_Factory import *
-import random
 import colorsys
 # ==============================================
 # TODO:
@@ -451,3 +451,38 @@ class ColorStep(AC_FUN):
             else : res += "," + f"#{hr}{hg}{hb} "
             
         return (res,)
+
+class IsImageExample(AC_FUN):
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "image": ("IMAGE",),
+            },
+            "optional": {
+                "image_path": ("STRING", {"default": ""}),
+            },
+        }
+    RETURN_TYPES = ("BOOLEAN",)
+    RETURN_NAMES = ["is_example"]
+
+    FUNCTION = "main"
+
+    def main(self, image, image_path=""):
+        if image_path:
+            filename = os.path.basename(image_path)
+            if "example" in filename.lower():
+                return (True,)
+
+        if image is None:
+            return (True,)
+        if not isinstance(image, torch.Tensor):
+            return (True,)
+        if image.numel() == 0:
+            return (True,)
+        if torch.allclose(image, torch.zeros_like(image)):
+            return (True,)
+        if torch.allclose(image, torch.ones_like(image)):
+            return (True,)
+
+        return (False,)
